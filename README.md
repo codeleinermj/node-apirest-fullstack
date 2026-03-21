@@ -1,43 +1,53 @@
 # Node API REST Fullstack
 
-> **Estado: En desarrollo activo** — Este proyecto se encuentra en fase de construccion. El PRD completo sera publicado al finalizar el desarrollo.
-
----
-
 ## Resumen del Proyecto
+Plataforma fullstack que implementa una API REST escalable con arquitectura en capas. Incluye autenticación basada en JWT, autorización por roles, gestión completa de usuarios y productos, documentación interactiva con Swagger, testing automatizado (unitario e integración) y pruebas de carga.
+El frontend consume todos los endpoints mediante una interfaz moderna con tema oscuro, animaciones fluidas y manejo de estados eficiente.
 
-Proyecto fullstack que implementa una API REST profesional con su frontend de pruebas. El backend maneja autenticacion JWT, autorizacion por roles, CRUD completo de productos y usuarios, documentacion Swagger, testing unitario/integracion y pruebas de estres. El frontend consume todos los endpoints con una interfaz moderna, tema dark y animaciones fluidas.
+## ¿Porque este proyecto?
 
+Construí esta API para tener una implementación de referencia que cubra los patrones que uso en producción: auth JWT con refresh tokens, autorización por roles, audit trail con historial de cambios, validación con Zod, testing a tres niveles (unit, integration, stress), y CI/CD.
+
+El frontend existe para probar cada endpoint visualmente, no como producto final.
+
+Lo que me interesaba practicar y demostrar:
+
+Arquitectura layered con separation of concerns real (no todo en el controller)
+Audit/traceability — quién hizo qué, cuándo, con diff de cambios
+Testing que va más allá de "happy path": permisos, roles, edge cases, carga
+Un stress test con k6 que pasa umbrales reales (p95 < 200ms, >500 req/s)
 ---
-
-## PRD (Product Requirements Document)
 
 ### Vision
 
-Construir una API REST robusta y profesional como pieza de portafolio, acompanada de un frontend interactivo que permita probar todos los endpoints en tiempo real.
+Construir una API REST con nodeJs y express , acompanada de un frontend interactivo que permita probar todos los endpoints en tiempo real.
 
 ### Objetivos
 
 1. Implementar autenticacion JWT con access/refresh tokens y roles (ADMIN, USER)
 2. CRUD completo de productos con paginacion, filtrado y ordenamiento
 3. Gestion de usuarios con autorizacion basada en roles
-4. Documentacion automatica con Swagger/OpenAPI
-5. Testing: unitario, integracion y estres (k6)
-6. Frontend moderno con Next.js para probar toda la API visualmente
-7. Entorno reproducible con Docker
+4. Sistema de auditoria y trazabilidad (quien creo/actualizo/elimino, cuando, historial de cambios)
+5. Documentacion automatica con Swagger/OpenAPI
+6. Testing: unitario, integracion y estres (k6)
+7. Frontend moderno con Next.js para probar toda la API visualmente
+8. Entorno reproducible con Docker
 
 ### Modulos
 
 | Modulo | Backend | Frontend | Estado |
 |--------|---------|----------|--------|
-| Autenticacion (Register/Login/Refresh) | Implementado | Implementado | En desarrollo |
-| Productos (CRUD + filtros + paginacion) | Implementado | Implementado | En desarrollo |
-| Usuarios (CRUD + roles) | Implementado | Implementado | En desarrollo |
-| Documentacion Swagger | Implementado | N/A | En desarrollo |
-| Tests unitarios | Implementado | Pendiente | En desarrollo |
-| Tests de integracion | Implementado | Pendiente | En desarrollo |
-| Test de estres (k6) | Implementado | N/A | En desarrollo |
-| CI/CD (GitHub Actions) | Implementado | Pendiente | En desarrollo |
+| Autenticacion (Register/Login/Refresh) | Implementado | Implementado | Completo |
+| Productos (CRUD + filtros + paginacion) | Implementado | Implementado | Completo |
+| Usuarios (CRUD + roles) | Implementado | Implementado | Completo |
+| Auditoria y trazabilidad | Implementado | Implementado | Completo |
+| Documentacion Swagger | Implementado | N/A | Completo |
+| Rate Limiting | Implementado | N/A | Completo |
+| Tests unitarios | Implementado | Implementado | Completo |
+| Tests de componentes | N/A | Implementado | Completo |
+| Tests de integracion | Implementado | Pendiente | Backend completo |
+| Test de estres (k6) | Implementado | N/A | Completo |
+| CI/CD (GitHub Actions) | Implementado | Pendiente | Backend completo |
 
 ---
 
@@ -48,13 +58,16 @@ Construir una API REST robusta y profesional como pieza de portafolio, acompanad
 | Tecnologia | Uso |
 |-----------|-----|
 | Node.js 20 LTS | Runtime |
-| Express 4.x | Framework HTTP |
+| Express 5.x | Framework HTTP |
 | TypeScript 5.x (strict) | Lenguaje |
 | Prisma 5.x | ORM type-safe |
 | PostgreSQL 16 | Base de datos |
 | Zod | Validacion de datos |
 | JWT (jsonwebtoken) | Autenticacion |
 | bcrypt | Hash de passwords |
+| express-rate-limit | Rate limiting (global + auth) |
+| Helmet 8.x | Headers de seguridad HTTP |
+| compression | Compresion gzip de respuestas |
 | Swagger (swagger-jsdoc) | Documentacion API |
 | Vitest + Supertest | Testing |
 | k6 | Test de estres |
@@ -72,6 +85,8 @@ Construir una API REST robusta y profesional como pieza de portafolio, acompanad
 | Tailwind CSS 4 | Estilos utility-first |
 | Framer Motion 12 | Animaciones fluidas |
 | Lucide React | Iconos |
+| Vitest + React Testing Library | Testing unitario y de componentes |
+| MSW (Mock Service Worker) | Mock de API en tests |
 
 ---
 
@@ -86,7 +101,8 @@ node-apirest-fullstack/
 │   │   ├── modules/
 │   │   │   ├── auth/        # Register, Login, Refresh
 │   │   │   ├── user/        # CRUD usuarios
-│   │   │   └── product/     # CRUD productos
+│   │   │   ├── product/     # CRUD productos
+│   │   │   └── audit/       # Auditoria y trazabilidad
 │   │   └── shared/          # Middlewares, utils, types
 │   ├── prisma/              # Schema, migraciones, seeds
 │   ├── tests/               # Unit, integration, stress
@@ -102,6 +118,28 @@ node-apirest-fullstack/
 │
 └── README.md
 ```
+
+---
+
+## Screenshots
+
+### Home
+![Home](docs/screenshots/home.PNG)
+
+### Autenticacion
+
+| Login | Register |
+|-------|----------|
+| ![Login](docs/screenshots/login.PNG) | ![Register](docs/screenshots/register.PNG) |
+
+### Dashboard
+![Dashboard](docs/screenshots/dashboard.PNG)
+
+### Products
+![Products](docs/screenshots/products.PNG)
+
+### Audit Log
+![Audit](docs/screenshots/audit.PNG)
 
 ---
 
@@ -144,13 +182,6 @@ npm run dev                   # http://localhost:3001
 | Swagger Docs | http://localhost:3000/api/docs |
 | Frontend | http://localhost:3001 |
 | Health Check | http://localhost:3000/api/health |
-
-### Usuarios de prueba (despues del seed)
-
-| Email | Password | Rol |
-|-------|----------|-----|
-| admin@example.com | admin123 | ADMIN |
-| user@example.com | user123 | USER |
 
 ---
 

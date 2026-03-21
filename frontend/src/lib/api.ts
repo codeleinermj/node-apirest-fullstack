@@ -9,6 +9,8 @@ import type {
   UpdateProductInput,
   ProductsQuery,
   PaginationMeta,
+  AuditLog,
+  AuditQuery,
 } from "./types";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000/api";
@@ -51,6 +53,19 @@ async function request<T>(
   });
 
   const json = await res.json();
+
+  // Rate limit exceeded
+  if (res.status === 429) {
+    return {
+      success: false,
+      error: {
+        code: "RATE_LIMIT_EXCEEDED",
+        message:
+          json?.error?.message ??
+          "Demasiadas solicitudes. Por favor, intenta de nuevo mas tarde.",
+      },
+    } as ApiResponse<T>;
+  }
 
   // Try refresh if 401
   if (res.status === 401 && tokens?.refreshToken) {
@@ -159,6 +174,22 @@ export function updateProduct(id: string, data: UpdateProductInput) {
 
 export function deleteProduct(id: string) {
   return request<Product>(`/products/${id}`, { method: "DELETE" });
+}
+
+// Audit
+export function getAuditLogs(query: AuditQuery = {}) {
+  const params = new URLSearchParams();
+  if (query.page) params.set("page", String(query.page));
+  if (query.limit) params.set("limit", String(query.limit));
+  if (query.entity) params.set("entity", query.entity);
+  if (query.action) params.set("action", query.action);
+  if (query.userId) params.set("userId", query.userId);
+  const qs = params.toString();
+  return request<AuditLog[]>(`/audit${qs ? `?${qs}` : ""}`);
+}
+
+export function getEntityAuditLogs(entity: string, entityId: string, page = 1, limit = 20) {
+  return request<AuditLog[]>(`/audit/${entity}/${entityId}?page=${page}&limit=${limit}`);
 }
 
 // Health

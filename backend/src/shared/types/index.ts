@@ -22,6 +22,8 @@ declare global {
     interface Request {
       userId?: string;
       userRole?: Role;
+      requestId: string;
+      log: import('pino').Logger;
     }
   }
 }

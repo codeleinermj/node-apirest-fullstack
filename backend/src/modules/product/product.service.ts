@@ -2,6 +2,7 @@ import { Prisma } from '@prisma/client';
 import { prisma } from '../../database/prisma';
 import { ApiError } from '../../shared/utils/api-error';
 import { CreateProductInput, UpdateProductInput } from './product.schema';
+import { auditService, buildChanges } from '../audit/audit.service';
 
 const productInclude = {
   author: {
@@ -15,6 +16,8 @@ export class ProductService {
       data: { ...data, authorId },
       include: productInclude,
     });
+
+    await auditService.log('CREATE', 'Product', product.id, authorId);
 
     return product;
   }
@@ -95,11 +98,15 @@ export class ProductService {
       throw ApiError.forbidden('Solo el autor o un ADMIN pueden actualizar este producto');
     }
 
+    const changes = buildChanges(product as unknown as Record<string, unknown>, data as Record<string, unknown>);
+
     const updated = await prisma.product.update({
       where: { id },
       data,
       include: productInclude,
     });
+
+    await auditService.log('UPDATE', 'Product', id, requesterId, changes);
 
     return updated;
   }
@@ -116,6 +123,7 @@ export class ProductService {
     }
 
     await prisma.product.delete({ where: { id } });
+    await auditService.log('DELETE', 'Product', id, requesterId);
   }
 }
 

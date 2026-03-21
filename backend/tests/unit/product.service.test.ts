@@ -10,6 +10,9 @@ vi.mock('../../src/database/prisma', () => ({
       delete: vi.fn(),
       count: vi.fn(),
     },
+    auditLog: {
+      create: vi.fn(),
+    },
   },
 }));
 

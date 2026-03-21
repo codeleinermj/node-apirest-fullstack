@@ -12,12 +12,14 @@ import {
   UserPlus,
   LayoutDashboard,
   Zap,
+  FileText,
 } from "lucide-react";
 
 const navLinks = [
   { href: "/products", label: "Products", icon: Package },
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard, auth: true },
   { href: "/users", label: "Users", icon: Users, admin: true },
+  { href: "/audit", label: "Audit", icon: FileText, admin: true },
 ];
 
 export function Navbar() {

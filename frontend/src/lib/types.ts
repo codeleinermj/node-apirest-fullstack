@@ -82,3 +82,22 @@ export interface ProductsQuery {
   maxPrice?: number;
   search?: string;
 }
+
+export interface AuditLog {
+  id: string;
+  action: "CREATE" | "UPDATE" | "DELETE";
+  entity: "Product" | "User";
+  entityId: string;
+  userId: string;
+  user?: { id: string; name: string; email: string };
+  changes: Record<string, { from: unknown; to: unknown }> | null;
+  createdAt: string;
+}
+
+export interface AuditQuery {
+  page?: number;
+  limit?: number;
+  entity?: "Product" | "User";
+  action?: "CREATE" | "UPDATE" | "DELETE";
+  userId?: string;
+}

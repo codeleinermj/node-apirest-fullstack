@@ -5,6 +5,7 @@ import { env } from '../../config/env';
 import { ApiError } from '../../shared/utils/api-error';
 import { JwtPayload, RefreshTokenPayload } from '../../shared/types';
 import { RegisterInput, LoginInput } from './auth.schema';
+import { auditService } from '../audit/audit.service';
 
 export class AuthService {
   async register(data: RegisterInput) {
@@ -23,6 +24,8 @@ export class AuthService {
       },
       select: { id: true, email: true, name: true, role: true, createdAt: true },
     });
+
+    await auditService.log('CREATE', 'User', user.id, user.id);
 
     return user;
   }

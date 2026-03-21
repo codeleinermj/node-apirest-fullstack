@@ -1,6 +1,7 @@
 import { prisma } from '../../database/prisma';
 import { ApiError } from '../../shared/utils/api-error';
 import { UpdateUserInput } from './user.schema';
+import { auditService, buildChanges } from '../audit/audit.service';
 
 const userSelect = {
   id: true,
@@ -68,16 +69,20 @@ export class UserService {
       }
     }
 
+    const changes = buildChanges(user as unknown as Record<string, unknown>, data as Record<string, unknown>);
+
     const updated = await prisma.user.update({
       where: { id },
       data,
       select: userSelect,
     });
 
+    await auditService.log('UPDATE', 'User', id, requesterId, changes);
+
     return updated;
   }
 
-  async delete(id: string) {
+  async delete(id: string, requesterId: string) {
     const user = await prisma.user.findUnique({ where: { id } });
     if (!user || !user.active) {
       throw ApiError.notFound('Usuario no encontrado');
@@ -87,6 +92,8 @@ export class UserService {
       where: { id },
       data: { active: false },
     });
+
+    await auditService.log('DELETE', 'User', id, requesterId);
   }
 }
 

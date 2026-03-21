@@ -12,6 +12,12 @@ enum Role {
   ADMIN
 }
 
+enum AuditAction {
+  CREATE
+  UPDATE
+  DELETE
+}
+
 model User {
   id        String    @id @default(uuid())
   email     String    @unique
@@ -20,6 +26,7 @@ model User {
   role      Role      @default(USER)
   active    Boolean   @default(true)
   products  Product[]
+  auditLogs AuditLog[]
   createdAt DateTime  @default(now()) @map("created_at")
   updatedAt DateTime  @updatedAt @map("updated_at")
 
@@ -40,4 +47,20 @@ model Product {
   @@index([authorId])
   @@index([price])
   @@map("products")
+}
+
+model AuditLog {
+  id        String      @id @default(uuid())
+  action    AuditAction
+  entity    String
+  entityId  String      @map("entity_id")
+  userId    String      @map("user_id")
+  user      User        @relation(fields: [userId], references: [id])
+  changes   Json?
+  createdAt DateTime    @default(now()) @map("created_at")
+
+  @@index([entity, entityId])
+  @@index([userId])
+  @@index([createdAt])
+  @@map("audit_logs")
 }

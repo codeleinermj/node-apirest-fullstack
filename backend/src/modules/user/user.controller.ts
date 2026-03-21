@@ -39,7 +39,7 @@ export class UserController {
 
   async delete(req: Request, res: Response, next: NextFunction) {
     try {
-      await userService.delete(req.params.id as string);
+      await userService.delete(req.params.id as string, req.userId!);
       ApiResponse.success(res, { message: 'Usuario eliminado' });
     } catch (error) {
       next(error);
