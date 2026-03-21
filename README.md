@@ -51,6 +51,17 @@ Construir una API REST con nodeJs y express , acompanada de un frontend interact
 
 ---
 
+## Demo
+
+| Servicio | URL |
+|----------|-----|
+| Frontend | https://frontend-delta-wine-78.vercel.app |
+| Backend API | https://optimistic-caring-production.up.railway.app/api |
+| Swagger Docs | https://optimistic-caring-production.up.railway.app/api/docs |
+| Health Check | https://optimistic-caring-production.up.railway.app/api/health |
+
+---
+
 ## Stack Tecnologico
 
 ### Backend
