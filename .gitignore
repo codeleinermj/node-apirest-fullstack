@@ -35,6 +35,10 @@ coverage/
 # Docker volumes
 pgdata/
 
+# Claude Code / Agents
+.claude/
+.agents/
+
 # Temp files
 *.tmp
 *.swp
