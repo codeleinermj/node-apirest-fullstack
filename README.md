@@ -185,7 +185,7 @@ npm install
 npm run dev                   # http://localhost:3001
 ```
 
-### URLs
+### URLs locales
 
 | Servicio | URL |
 |----------|-----|
