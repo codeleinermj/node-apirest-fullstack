@@ -9,6 +9,7 @@ const envSchema = z.object({
   JWT_ACCESS_EXPIRES_IN: z.string().default('15m'),
   JWT_REFRESH_EXPIRES_IN: z.string().default('7d'),
   BCRYPT_SALT_ROUNDS: z.coerce.number().min(4).max(16).default(10),
+  ALLOWED_ORIGINS: z.string().default('http://localhost:3001'),
 });
 
 type Env = z.infer<typeof envSchema>;

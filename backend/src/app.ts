@@ -11,6 +11,9 @@ import { userRoutes } from './modules/user/user.routes';
 import { productRoutes } from './modules/product/product.routes';
 import { auditRoutes } from './modules/audit/audit.routes';
 import { swaggerSpec } from './config/swagger';
+import { env } from './config/env';
+
+const allowedOrigins = env.ALLOWED_ORIGINS.split(',').map((o) => o.trim());
 
 export const app = express();
 
@@ -27,7 +30,19 @@ app.use(
     crossOriginEmbedderPolicy: false,
   }),
 );
-app.use(cors());
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Permitir requests sin Origin: Postman, Swagger, curl, mobile apps
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) return callback(null, true);
+      callback(new Error(`Origin ${origin} not allowed by CORS`));
+    },
+    methods: ['GET', 'POST', 'PATCH', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+  }),
+);
 app.use(compression({ threshold: 1024, level: 6 }));
 app.use(globalLimiter);
 app.use(express.json({ limit: '10mb' }));
