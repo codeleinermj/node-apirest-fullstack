@@ -185,15 +185,6 @@ npm install
 npm run dev                   # http://localhost:3001
 ```
 
-### URLs locales
-
-| Servicio | URL |
-|----------|-----|
-| Backend API | http://localhost:3000/api |
-| Swagger Docs | http://localhost:3000/api/docs |
-| Frontend | http://localhost:3001 |
-| Health Check | http://localhost:3000/api/health |
-
 ---
 
 ## Licencia
