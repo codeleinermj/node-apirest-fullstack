@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "skills": {
+    "framer-motion-animator": {
+      "source": "patricio0312rev/skills",
+      "sourceType": "github",
+      "computedHash": "22a8401fab0cdf32d5c153b98aba5e95435a479810896879535dc7ac3710efbe"
+    },
+    "nextjs-react-typescript": {
+      "source": "mindrally/skills",
+      "sourceType": "github",
+      "computedHash": "52067402daf8388ba7970478e0ba1f350f1868a65a62ae2bf6f4dc1ac3cf3e88"
+    }
+  }
+}
