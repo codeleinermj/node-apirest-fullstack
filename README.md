@@ -62,6 +62,17 @@ Construir una API REST con nodeJs y express , acompanada de un frontend interact
 
 ---
 
+## Credenciales de prueba
+
+| Rol | Email | Password |
+|-----|-------|----------|
+| ADMIN | admin@example.com | admin123 |
+| USER | user@example.com | user123 |
+
+> El rol **ADMIN** da acceso a la gestión de usuarios y al audit log completo.
+
+---
+
 ## Stack Tecnologico
 
 ### Backend
