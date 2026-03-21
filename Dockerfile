@@ -6,7 +6,7 @@ WORKDIR /app
 COPY backend/package*.json ./
 COPY backend/prisma ./prisma/
 
-RUN npm ci
+RUN npm install
 
 COPY backend/tsconfig.json ./
 COPY backend/src ./src/
@@ -22,7 +22,7 @@ WORKDIR /app
 COPY backend/package*.json ./
 COPY backend/prisma ./prisma/
 
-RUN npm ci --omit=dev
+RUN npm install --omit=dev
 RUN npx prisma generate
 
 COPY --from=builder /app/dist ./dist
