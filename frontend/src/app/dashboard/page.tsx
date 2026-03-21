@@ -45,11 +45,14 @@ export default function DashboardPage() {
 
   useEffect(() => {
     async function load() {
-      const res = await api.getProducts({ limit: 100 });
-      if (res.success) {
-        setMyProducts(res.data.filter((p) => p.authorId === user?.id));
+      try {
+        const res = await api.getProducts({ limit: 100 });
+        if (res.success) {
+          setMyProducts(res.data.filter((p) => p.authorId === user?.id));
+        }
+      } finally {
+        setIsLoadingProducts(false);
       }
-      setIsLoadingProducts(false);
     }
     if (user) load();
   }, [user]);

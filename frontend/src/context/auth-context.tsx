@@ -36,7 +36,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const tokens = api.getTokens();
     if (tokens?.accessToken) {
       try {
-        const payload = JSON.parse(atob(tokens.accessToken.split(".")[1]));
+        const base64 = tokens.accessToken.split(".")[1].replace(/-/g, "+").replace(/_/g, "/");
+        const payload = JSON.parse(atob(base64));
         setState({
           user: {
             id: payload.sub,

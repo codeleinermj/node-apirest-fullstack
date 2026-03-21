@@ -42,7 +42,7 @@ export class AuthService {
       throw ApiError.unauthorized('Credenciales inválidas');
     }
 
-    const accessToken = this.generateAccessToken({ sub: user.id, role: user.role });
+    const accessToken = this.generateAccessToken({ sub: user.id, role: user.role, email: user.email, name: user.name });
     const refreshToken = this.generateRefreshToken({ sub: user.id, type: 'refresh' });
 
     return {
@@ -66,7 +66,7 @@ export class AuthService {
         throw ApiError.unauthorized('Usuario no encontrado');
       }
 
-      const newAccessToken = this.generateAccessToken({ sub: user.id, role: user.role });
+      const newAccessToken = this.generateAccessToken({ sub: user.id, role: user.role, email: user.email, name: user.name });
       const newRefreshToken = this.generateRefreshToken({ sub: user.id, type: 'refresh' });
 
       return { accessToken: newAccessToken, refreshToken: newRefreshToken };
