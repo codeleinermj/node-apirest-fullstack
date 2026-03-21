@@ -21,7 +21,7 @@ export class AuditService {
         entity,
         entityId,
         userId,
-        changes: changes ?? Prisma.JsonNull,
+        changes: changes ? (changes as unknown as Prisma.InputJsonValue) : Prisma.JsonNull,
       },
     });
   }
