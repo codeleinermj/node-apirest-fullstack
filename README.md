@@ -1,5 +1,6 @@
 # Node API REST Fullstack
-
+## 
+![Home](docs/screenshots/home.PNG)
 ## Resumen del Proyecto
 Plataforma fullstack que implementa una API REST escalable con arquitectura en capas. Incluye autenticación basada en JWT, autorización por roles, gestión completa de usuarios y productos, documentación interactiva con Swagger, testing automatizado (unitario e integración) y pruebas de carga.
 El frontend consume todos los endpoints mediante una interfaz moderna con tema oscuro, animaciones fluidas y manejo de estados eficiente.
