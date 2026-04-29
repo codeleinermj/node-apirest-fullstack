@@ -57,9 +57,11 @@ Construir una API REST con nodeJs y express , acompanada de un frontend interact
 | Servicio | URL |
 |----------|-----|
 | Frontend | https://frontend-delta-wine-78.vercel.app |
-| Backend API | https://optimistic-caring-production.up.railway.app/api |
-| Swagger Docs | https://optimistic-caring-production.up.railway.app/api/docs |
-| Health Check | https://optimistic-caring-production.up.railway.app/api/health |
+| Backend API | https://node-apirest-fullstack.onrender.com/api |
+| Swagger Docs | https://node-apirest-fullstack.onrender.com/api/docs |
+| Health Check | https://node-apirest-fullstack.onrender.com/api/health |
+
+> El backend corre en Render free tier: tras 15 minutos sin tráfico el servicio se duerme y la primera request despierta el contenedor (cold start ~30–60s). La base PostgreSQL free expira a los 90 días.
 
 ---
 
@@ -196,6 +198,45 @@ cd frontend
 npm install
 npm run dev                   # http://localhost:3001
 ```
+
+---
+
+## Deploy en Render
+
+El repo incluye [render.yaml](render.yaml), un blueprint que aprovisiona en una sola pasada:
+
+- Web service Docker (free tier) construido desde el [Dockerfile](Dockerfile) raíz
+- PostgreSQL 16 gestionado (free tier)
+- `DATABASE_URL` inyectado automáticamente desde la DB al servicio
+- `JWT_ACCESS_SECRET` y `JWT_REFRESH_SECRET` generados por Render (no se suben al repo)
+
+### Crear los servicios
+
+1. Push del repo a GitHub
+2. En Render: **New → Blueprint** → conectar el repo → aplicar `render.yaml`
+3. Render aprovisiona web + DB y dispara el primer build
+
+El `Dockerfile` ejecuta `npx prisma migrate deploy` antes de levantar el servidor, así que las tablas se crean solas en cada deploy.
+
+### Configurar CORS y frontend
+
+- En el servicio de Render, editar `ALLOWED_ORIGINS` con la URL real del frontend (separadas por coma si hay varias)
+- En Vercel, setear `NEXT_PUBLIC_API_URL=https://<tu-servicio>.onrender.com/api` y redeploy
+
+### Migrar datos desde otro PostgreSQL
+
+```bash
+# Dump de la DB actual (no commitear el archivo)
+pg_dump "$SOURCE_DATABASE_URL" --no-owner --no-acl --clean --if-exists -f backup.sql
+
+# Restore en Render (External Database URL del dashboard)
+psql "$RENDER_DATABASE_URL" -f backup.sql
+
+# Verificación rápida
+psql "$RENDER_DATABASE_URL" -c "SELECT COUNT(*) FROM \"Product\";"
+```
+
+> `SOURCE_DATABASE_URL` y `RENDER_DATABASE_URL` se exportan a la shell antes de correr los comandos. Nunca commitear `backup.sql` ni las connection strings.
 
 ---
 

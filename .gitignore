@@ -42,3 +42,8 @@ pgdata/
 # Temp files
 *.tmp
 *.swp
+
+# DB dumps (no commitear nunca)
+*.sql.gz
+backup.sql
+dump.sql
