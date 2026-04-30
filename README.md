@@ -238,6 +238,26 @@ psql "$RENDER_DATABASE_URL" -c "SELECT COUNT(*) FROM \"Product\";"
 
 > `SOURCE_DATABASE_URL` y `RENDER_DATABASE_URL` se exportan a la shell antes de correr los comandos. Nunca commitear `backup.sql` ni las connection strings.
 
+### Renovar la DB free cada 90 días
+
+La PostgreSQL free de Render expira a los 90 días. Como esto es un demo con seed data fija, la estrategia es **borrar y recrear** cuando el dashboard avise expiración (~1 semana antes):
+
+1. Render dashboard → DB `api-rest-db` → **Delete Database**
+2. Render dashboard → Blueprint `node-apirest-fullstack` → **Manual Sync** (recrea la DB desde `render.yaml`)
+3. Esperar a que el web service quede `Live` (corre `prisma migrate deploy` solo en el container start)
+4. Re-seedear desde local con la nueva External Database URL:
+   ```bash
+   cd backend
+   DATABASE_URL='<nueva-external-url-de-render>' npm run prisma:seed
+   ```
+5. Verificar:
+   ```bash
+   curl https://node-apirest-fullstack.onrender.com/api/health
+   curl https://node-apirest-fullstack.onrender.com/api/products?limit=2
+   ```
+
+> El `DATABASE_URL` interno se renueva automáticamente porque el blueprint usa `fromDatabase`. No hay que tocar variables del web service.
+
 ---
 
 ## Licencia
